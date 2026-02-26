@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONE Championship 情報アーカイブ</title>
+<style>
+  :root{--red:#e62020;--dark:#0d0d0d;--card:#161616;--border:#2a2a2a;--gold:#c9a227;--text:#e8e8e8;--muted:#888;--win:#1a3a1a;--lose:#3a1a1a;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--dark);color:var(--text);font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;line-height:1.7;}
+
+header{background:linear-gradient(135deg,#0d0d0d,#1a0000 50%,#0d0d0d);border-bottom:2px solid var(–red);padding:20px 16px;text-align:center;}
+header h1{font-size:clamp(16px,4vw,28px);font-weight:900;letter-spacing:2px;text-transform:uppercase;}
+header h1 span{color:var(–red);}
+.header-sub{font-size:11px;color:var(–muted);margin-top:4px;}
+
+/* DATE TABS */
+.date-tabs{background:#111;border-bottom:1px solid var(–border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px;}
+.date-tabs::-webkit-scrollbar{display:none;}
+.date-btn{background:none;border:none;cursor:pointer;padding:12px 18px;font-size:12px;font-weight:700;color:var(–muted);border-bottom:3px solid transparent;white-space:nowrap;transition:.2s;flex-shrink:0;}
+.date-btn.active{color:#fff;border-bottom-color:var(–red);}
+.dot-up{color:var(–red);margin-right:3px;font-size:9px;}
+.dot-past{color:#444;margin-right:3px;font-size:9px;}
+
+main{max-width:960px;margin:0 auto;padding:24px 14px 60px;}
+.date-panel{display:none;}
+.date-panel.active{display:block;}
+
+/* EVENT HEADER */
+.ev-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 18px;border-radius:8px;background:linear-gradient(135deg,#161616,#1e0000);border:1px solid var(–red);}
+.ev-badge{color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;padding:4px 10px;border-radius:3px;white-space:nowrap;text-transform:uppercase;}
+.badge-up{background:var(–red);}
+.badge-done{background:#444;}
+.ev-title{font-size:clamp(14px,2.5vw,19px);font-weight:800;}
+.ev-meta{font-size:11px;color:var(–muted);margin-top:2px;}
+
+/* INFO CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
+.chip{background:#1a1a1a;border:1px solid var(–border);border-radius:4px;padding:5px 10px;font-size:11px;}
+.chip span{color:var(–muted);margin-right:3px;}
+.chip strong{color:#fff;}
+
+/* SECTION TITLE */
+.sec{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–red);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(–border);}
+
+/* BOUT BLOCK */
+.bout-block{background:var(–card);border:1px solid var(–border);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.bout-head{background:#1a1a1a;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(–border);}
+.bout-label{font-size:11px;font-weight:700;color:#fff;}
+.sport-tag{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.s-muay{background:rgba(230,32,32,.2);color:#ff6b6b;border:1px solid rgba(230,32,32,.3);}
+.s-kick{background:rgba(100,180,255,.15);color:#7ecfff;border:1px solid rgba(100,180,255,.3);}
+.s-mma{background:rgba(180,120,255,.15);color:#c9a0ff;border:1px solid rgba(180,120,255,.3);}
+
+/* FIGHTERS */
+.fighters{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;padding:14px 14px 10px;}
+.f-box{border-radius:8px;padding:12px;}
+.f-box.neutral{background:#111;border:1px solid var(–border);}
+.f-box.win{background:var(–win);border:1px solid #2d6b2d;}
+.f-box.lose{background:var(–lose);border:1px solid #6b2d2d;}
+.result-mark{font-size:20px;font-weight:900;margin-bottom:4px;}
+.rm-win{color:#4dff4d;}
+.rm-lose{color:#ff4d4d;}
+.f-name{font-size:13px;font-weight:800;color:#fff;line-height:1.3;}
+.f-country{font-size:11px;color:var(–muted);margin-top:2px;}
+.f-record{font-size:11px;color:var(–gold);margin-top:2px;}
+.f-profile{font-size:11px;color:#aaa;margin-top:7px;line-height:1.6;}
+.f-profile strong{color:#ccc;}
+.vs-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-top:6px;}
+.vs-txt{font-size:18px;font-weight:900;color:var(–red);}
+.method{background:#1a1a1a;border:1px solid var(–border);color:var(–muted);font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;text-align:center;white-space:nowrap;}
+.method.win-method{background:#1e3a1e;border-color:#2d6b2d;color:#7fff7f;}
+
+/* HIGHLIGHT / REPORT */
+.highlight-box{margin:0 14px 14px;background:linear-gradient(135deg,#111,#1a0a00);border:1px solid rgba(201,162,39,.3);border-left:4px solid var(–gold);border-radius:6px;padding:12px 14px;}
+.highlight-box .hl-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(–gold);margin-bottom:6px;}
+.highlight-box p{font-size:12px;color:#bbb;line-height:1.75;}
+.highlight-box p strong{color:#ddd;}
+
+.report-box{margin:0 14px 14px;background:#0f0f0f;border:1px solid var(–border);border-left:4px solid var(–red);border-radius:6px;padding:12px 14px;}
+.report-box .rp-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(–red);margin-bottom:6px;}
+.report-box p{font-size:12px;color:#bbb;line-height:1.75;}
+.report-box p strong{color:#ddd;}
+
+.intro{background:#111;border-left:4px solid var(–red);border-radius:4px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:#bbb;line-height:1.7;}
+.intro strong{color:#fff;}
+
+@media(max-width:560px){
+.fighters{grid-template-columns:1fr;gap:8px;}
+.vs-col{flex-direction:row;padding:0;justify-content:center;}
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <h1>ONE <span>Championship</span> 情報アーカイブ</h1>
+  <p class="header-sub">ルンピニースタジアム発・ムエタイ／キック／MMA 日本語まとめ ／ 毎週更新</p>
+</header>
+
+<div class="date-tabs">
+  <button class="date-btn active" onclick="showDate('0227',this)"><span class="dot-up">●</span>2月27日</button>
+  <button class="date-btn" onclick="showDate('0220',this)"><span class="dot-past">●</span>2月20日</button>
+</div>
+
+<main>
+
+<!-- ===================== 2月27日 ===================== -->
+
+<div id="d0227" class="date-panel active">
+  <div class="ev-header">
+    <div class="ev-badge badge-up">今週開催</div>
+    <div>
+      <div class="ev-title">ONE Friday Fights 144</div>
+      <div class="ev-meta">2026年2月27日（金）19:30 ICT ／ ルンピニースタジアム、バンコク</div>
+    </div>
+  </div>
+  <div class="chips">
+    <div class="chip"><span>試合数</span><strong>14試合</strong></div>
+    <div class="chip"><span>ムエタイ</span><strong>9</strong></div>
+    <div class="chip"><span>キック</span><strong>3</strong></div>
+    <div class="chip"><span>MMA</span><strong>2</strong></div>
+    <div class="chip"><span>視聴</span><strong>YouTube / watch.onefc.com</strong></div>
+  </div>
+
+  <div class="sec">🏆 メインイベント</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">アトム級（約52kg以下）</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">チャトピチット・ソー・ソー・トイパドリュー</div>
+        <div class="f-country">🇹🇭 タイ ／ 26歳</div>
+        <div class="f-record">戦績 62勝17敗 ／ 2連勝中</div>
+        <div class="f-profile">農家の家族を持つテクニシャン。<strong>ボディキックの精度とエルボーワーク</strong>が突出しており、クリンチ内での崩しと的確なエルボーが最大の武器。「故郷のコミュニティを鼓舞するために戦う」と語る。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">トゥプティムトン・インファーホテルウボン</div>
+        <div class="f-country">🇹🇭 タイ・ウボン府 ／ 25歳</div>
+        <div class="f-record">戦績 59勝14敗</div>
+        <div class="f-profile">鋭いストレートとエルボーを武器に2つのKO勝利を持つ豪打ファイター。<strong>3連敗からの巻き返し</strong>を狙う。初ボーナスで両親の農地を購入した人情派。今回はKO復活を誓って臨む。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>精密なテクニックで攻めるチャトピチットと、爆発的な一発を狙うトゥプティムトンの対照的なスタイルが激突。チャトピチットがボディキックとエルボーで試合を支配できるか、それともトゥプティムトンの一発がゲームを変えるか。3連敗中のトゥプティムトンは「後がない」状況だけに、序盤から全力で前に出てくることが予想される。<strong>最初の1ラウンドが試合の流れを決める</strong>重要な一戦。</p>
+    </div>
+  </div>
+
+  <div class="sec">⭐ コメインイベント</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">フライ級（約61kg以下）</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">ワンパデット・NF・ルックスアン</div>
+        <div class="f-country">🇻🇳→🇹🇭 ベトナム生まれタイ育ち ／ 23歳</div>
+        <div class="f-record">戦績 63勝11敗 ／ 6連勝中</div>
+        <div class="f-profile">ベトナム生まれながらタイで育ち、現在は父親ファイター。<strong>右ストレートとボディキック</strong>を軸にしたカウンタースタイル。家族の将来のために戦い続ける。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">ロートン・クルアイナイムアンジム</div>
+        <div class="f-country">🇹🇭 タイ・ノンブアランプー ／ 17歳</div>
+        <div class="f-record">戦績 56勝14敗</div>
+        <div class="f-profile">名前の意味は「黄金の盾」。16歳でONEデビューをKOで飾った天才少年。<strong>サウスポー↔オーソドックスの瞬時切り替え</strong>が最大の武器。当初反対していた母親が今では最大の応援団。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>6連勝中の安定した実力者ワンパデットに、わずか17歳の天才ロートンが挑む世代交代の一戦。ロートンの最大の武器であるスタンス切り替えをワンパデットのカウンターが捉えられるかが鍵。<strong>年齢差6歳の「若さ対経験」</strong>の構図も見どころで、ロートンが勝てば今後のフライ級戦線に大きな波紋を呼ぶことになる。</p>
+    </div>
+  </div>
+
+  <div class="sec">MMA 無敗対決</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">フライ級 無敗対決</span><span class="sport-tag s-mma">MMA</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">エドソン「トラップドア・スパイダー」マシャヴァーニ</div>
+        <div class="f-country">🇲🇿 モザンビーク ／ 30歳</div>
+        <div class="f-record">戦績 7勝0敗（5フィニッシュ）</div>
+        <div class="f-profile">2008年に母を亡くし一時ホームレス状態で<strong>レストランの厨房で寝泊まり</strong>しながら夢を追った苦労人。柔術ベースで素早いボディキックと危険な関節技を組み合わせる。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">サルドル「ゴールデン」カリボエフ</div>
+        <div class="f-country">🇺🇿 ウズベキスタン ／ 21歳</div>
+        <div class="f-record">戦績 5勝0敗（4フィニッシュ）</div>
+        <div class="f-profile">ウズベキスタン<strong>ジュニア・サンボ王者</strong>経験を持つ俊英。左の豪打でKOを狙いつつテイクダウンから一本を狙う。21歳とは思えない完成度。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>今大会最大のサプライズマッチ。柔術使いのモザンビーク人とサンボ使いのウズベキスタン人という<strong>異色の無敗対決</strong>。グラップリングで優位に立つのはどちらか、それとも打撃戦になるのか。どちらかが崩れた瞬間に試合が終わる可能性が高い。両者のONEメインロースター入りがかかった一戦でもある。</p>
+    </div>
+  </div>
+
+  <div class="sec">🇯🇵 日本人選手</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">バンタム級</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">レニー・ブラージ</div>
+        <div class="f-country">🇮🇹 イタリア</div>
+        <div class="f-profile">イタリア出身のムエタイ選手。ONEメインロースター入りを目指して来タイ参戦。積極的な前進スタイルで知られる。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">北野 勝希（キタノ カツキ）</div>
+        <div class="f-country">🇯🇵 日本</div>
+        <div class="f-profile">日本人ムエタイ選手。ONEとの<strong>100,000ドル契約獲得</strong>を懸けてイタリアの強豪に挑む注目の一戦。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>日本人ファンとして最注目の一戦。北野がタイのリングでイタリア選手を相手にどんな戦いを見せるか。<strong>勝利すれば100,000ドルのONE契約獲得</strong>というビッグチャンスを手にできる可能性がある。</p>
+    </div>
+  </div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">フェザー級</span><span class="sport-tag s-kick">キックボクシング</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">モハメド・ヒディディ</div>
+        <div class="f-country">🇲🇦 モロッコ</div>
+        <div class="f-profile">モロッコ出身のキックボクサー。攻撃的なプレッシャースタイルで前に出続ける積極的なファイター。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">柴田 勇哉（シバタ ユウヤ）</div>
+        <div class="f-country">🇯🇵 日本</div>
+        <div class="f-profile">日本人キックボクサー。ONEとの契約を懸けたモロッコとの国際戦に臨む。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>北野と並ぶ日本人注目選手。柴田がモロッコの強豪相手にどこまで自分のキックボクシングを展開できるかが鍵。<strong>日本のキックボクシングレベルをアピール</strong>できる絶好の機会。</p>
+    </div>
+  </div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">ストロー級</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box neutral">
+        <div class="f-name">エドガー・マルカリアン</div>
+        <div class="f-country">🇦🇲 アルメニア</div>
+        <div class="f-profile">アルメニア出身のムエタイ選手。テクニカルな打撃スタイルで知られる。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box neutral">
+        <div class="f-name">門所 仁（マンドコロ ジン）</div>
+        <div class="f-country">🇯🇵 日本</div>
+        <div class="f-profile">日本人ムエタイ選手。アルメニアの強豪を相手にONE契約を狙う。</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="hl-title">👁 見どころ</div>
+      <p>今大会3人目の日本人選手。門所がアルメニアのテクニカルファイターとの打撃戦でどう立ち回るかに注目。<strong>3試合全ての日本人が勝利すれば</strong>、ONEの日本市場での存在感がさらに高まることになる。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2月20日 ===================== -->
+
+<div id="d0220" class="date-panel">
+  <div class="ev-header">
+    <div class="ev-badge badge-done">終了</div>
+    <div>
+      <div class="ev-title">ONE Friday Fights 143</div>
+      <div class="ev-meta">2026年2月20日（金）19:30 ICT ／ ルンピニースタジアム、バンコク</div>
+    </div>
+  </div>
+  <div class="intro"><strong>ONE Samurai（日本月例シリーズ）発表直後に開催。</strong>複数のスプリット判定が示すようにどの試合も紙一重の名勝負が続いた一夜。</div>
+
+  <div class="sec">🏆 メインイベント</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">女子アトム級（約52kg以下）</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">ベロ「ザ・カヤン・レオパード」</div>
+        <div class="f-country">🇲🇲 ミャンマー ／ 29歳</div>
+        <div class="f-record">戦績 30勝4敗（試合後）</div>
+        <div class="f-profile">ミャンマー少数民族カヤン族出身。タイガームエタイ所属。<strong>冷静なカウンタースタイル</strong>と優れたクリンチワークが特徴。横移動でアングルを作り、相手の踏み込みをニーでカウンターする。世界王座挑戦が現実味を帯びてきた実力者。</div>
+      </div>
+      <div class="vs-col">
+        <div class="vs-txt">VS</div>
+        <div class="method win-method">スプリット判定</div>
+      </div>
+      <div class="f-box lose">
+        <div class="result-mark rm-lose">×</div>
+        <div class="f-name">シル・コーエン</div>
+        <div class="f-country">🇮🇱 イスラエル</div>
+        <div class="f-record">契約選手</div>
+        <div class="f-profile">イスラエル出身の積極的なプレッシャーファイター。<strong>ボクシングコンビネーションとローキック</strong>を絶え間なく打ち続ける前進スタイル。全ラウンドを攻め続けたが、カウンターの巧さに屈した。</div>
+      </div>
+    </div>
+    <div class="report-box">
+      <div class="rp-title">📝 試合レポート</div>
+      <p>開始直後からコーエンが激しいボクシングとローキックで猛プレッシャーをかけ続けた。しかしベロは冷静に横移動でアングルを作り、コーエンが踏み込んだ瞬間を的確なニーでカウンター。第2ラウンドでさらにリズムを掴み、ボディへの連打でコーエンの突進を完全に封じた。最終ラウンドもコーエンは手を緩めなかったが、<strong>2人の判定員がベロを支持しスプリット判定勝利。ONE女子アトム級ムエタイ世界王座挑戦権に大きく前進。</strong></p>
+    </div>
+  </div>
+
+  <div class="sec">⭐ コメインイベント</div>
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">フライ級（約61kg以下）</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">デンクリアンクライ・マビン・ムエタイ</div>
+        <div class="f-country">🇹🇭 タイ ／ 27歳</div>
+        <div class="f-record">4連勝達成</div>
+        <div class="f-profile">チームマビン・ムエタイ所属。クリンチで相手のボディにニーを集中させる<strong>明確なゲームプランを実行する</strong>ファイター。豊富な試合経験とファイトIQが持ち味。</div>
+      </div>
+      <div class="vs-col">
+        <div class="vs-txt">VS</div>
+        <div class="method win-method">スプリット判定</div>
+      </div>
+      <div class="f-box lose">
+        <div class="result-mark rm-lose">×</div>
+        <div class="f-name">ペタピチャット・アピチャット・ムエタイ</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-record">ラジャダムナーンスタジアム王者</div>
+        <div class="f-profile">ラジャダムナーンスタジアムの現役王者という肩書きを持つ実力者。<strong>精度の高いボクシングとエルボー</strong>を駆使し、レベルチェンジやローキックで相手のリズムを崩すスタイル。</div>
+      </div>
+    </div>
+    <div class="report-box">
+      <div class="rp-title">📝 試合レポート</div>
+      <p>デンクリアンクライが序盤からクリンチで相手のボディにニーを集中させる明確な戦略を実行。ペタピチャットは精度の高いボクシングとエルボーで応戦し、第2ラウンドは完全なチェスゲームの様相に。最終ラウンドも壮絶な接戦となったが、<strong>デンクリアンクライのタイミングとファイトIQが僅差で上回り4連勝を達成。</strong></p>
+    </div>
+  </div>
+
+  <div class="sec">その他の全試合結果</div>
+
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">バンタム級 フィーチャードバウト</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">パンリット・ルックジャオマエサイワリー</div>
+        <div class="f-country">🇹🇭 タイ ／ 29歳</div>
+        <div class="f-record">2連敗からの逆転勝利</div>
+        <div class="f-profile">スーパーボン・トレーニングキャンプ所属。<strong>積極的なジャブとパンチコンビネーション</strong>を主体とする前進スタイル。2連敗の崖っぷちから臨んだ一戦でKO宣言するも判定で見事復活。</div>
+      </div>
+      <div class="vs-col">
+        <div class="vs-txt">VS</div>
+        <div class="method win-method">スプリット判定</div>
+      </div>
+      <div class="f-box lose">
+        <div class="result-mark rm-lose">×</div>
+        <div class="f-name">ナクロブ・フェアテックス</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-record">フェアテックス所属・元トップ5</div>
+        <div class="f-profile">タイ名門ジム「フェアテックス」所属の実力者。<strong>鋭いエルボーと膝蹴り</strong>を武器とする精度重視のスタイル。今回は相手の前進に対する対応に苦しんだ。</div>
+      </div>
+    </div>
+    <div class="report-box">
+      <div class="rp-title">📝 試合レポート</div>
+      <p>2連敗中のパンリットが崖っぷちから大番狂わせ。第1ラウンドから積極的にジャブとダブルパンチを打ち込み主導権を握った。ナクロブはエルボーとクリンチのニーで対抗したが、パンリットの手数と前進が上回り<strong>逆転のスプリット判定勝利。</strong></p>
+    </div>
+  </div>
+
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">バンタム級 💰パフォーマンスボーナス受賞</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">ワンチャイノイ・ソー・トー・ヒューバンサーン</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-record">パフォーマンスボーナス $10,000獲得</div>
+        <div class="f-profile">鮮やかなフィニッシュ勝利でボーナスを手にした今大会のサプライズ選手。<strong>攻撃的なスタイル</strong>でインパクトある勝利を収めた。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box lose">
+        <div class="result-mark rm-lose">×</div>
+        <div class="f-name">対戦相手</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-profile">詳細情報収集中。</div>
+      </div>
+    </div>
+    <div class="report-box">
+      <div class="rp-title">📝 試合レポート</div>
+      <p>ワンチャイノイがインパクトのある勝ち方でパフォーマンスボーナス（$10,000）を獲得。<strong>今大会最も鮮烈なフィニッシュ</strong>のひとつとして会場を沸かせた。</p>
+    </div>
+  </div>
+
+  <div class="bout-block">
+    <div class="bout-head"><span class="bout-label">💰 その他パフォーマンスボーナス受賞</span><span class="sport-tag s-muay">ムエタイ</span></div>
+    <div class="fighters">
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">ラムシン・T1ファイトアカデミー</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-record">パフォーマンスボーナス $10,000獲得</div>
+        <div class="f-profile">T1ファイトアカデミー所属。鮮やかなフィニッシュで今大会のハイライトを飾った選手。</div>
+      </div>
+      <div class="vs-col"><div class="vs-txt">VS</div></div>
+      <div class="f-box win">
+        <div class="result-mark rm-win">○</div>
+        <div class="f-name">ティーヤイ・トーファンファーム</div>
+        <div class="f-country">🇹🇭 タイ</div>
+        <div class="f-record">パフォーマンスボーナス $10,000獲得</div>
+        <div class="f-profile">トーファンファームジム所属。それぞれ別の試合でフィニッシュ勝利を収め、ボーナスを獲得した。</div>
+      </div>
+    </div>
+    <div class="report-box">
+      <div class="rp-title">📝 試合レポート</div>
+      <p>ラムシンとティーヤイはそれぞれ別の試合でKOまたはTKO勝利を収め、それぞれ$10,000のパフォーマンスボーナスを獲得。<strong>合計3名のボーナス受賞者</strong>が出た今大会は、フィニッシュ率の高い白熱した夜となった。</p>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+function showDate(d,btn){
+  document.querySelectorAll('.date-panel').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.date-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('d'+d).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
