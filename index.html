@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONE Championship & RWS 週刊情報 | 日本語</title>
+<style>
+  :root {
+    --red:#e62020; --dark:#0d0d0d; --card:#161616; --border:#2a2a2a;
+    --gold:#c9a227; --text:#e8e8e8; --muted:#888;
+    --blue:#2280d0; --rws:#d4002a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--dark);color:var(--text);font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;line-height:1.7;}
+
+header{background:linear-gradient(135deg,#0d0d0d,#1a0000 50%,#0d0d0d);border-bottom:2px solid var(–red);padding:22px 20px;text-align:center;position:relative;}
+header::before{content:’’;position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(230,32,32,.15),transparent 70%);pointer-events:none;}
+.logo-tag{display:inline-block;background:var(–red);color:#fff;font-size:10px;font-weight:700;letter-spacing:3px;padding:4px 12px;border-radius:2px;margin-bottom:8px;text-transform:uppercase;}
+header h1{font-size:clamp(18px,4vw,34px);font-weight:900;letter-spacing:2px;text-transform:uppercase;}
+header h1 span{color:var(–red);}
+header h1 .rws-accent{color:#ff9900;}
+.header-sub{font-size:12px;color:var(–muted);margin-top:5px;letter-spacing:1px;}
+
+/* PROMO TABS */
+.promo-tabs{background:#0a0a0a;border-bottom:1px solid var(–border);display:flex;justify-content:center;gap:0;flex-wrap:wrap;}
+.promo-btn{background:none;border:none;cursor:pointer;padding:12px 28px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:.2s;border-bottom:3px solid transparent;color:var(–muted);}
+.promo-btn.active-one{color:#fff;border-bottom-color:var(–red);}
+.promo-btn.active-rws{color:#fff;border-bottom-color:#ff9900;}
+.promo-btn:hover{color:#fff;}
+.promo-label-one{color:var(–red);}
+.promo-label-rws{color:#ff9900;}
+
+/* WEEK TABS */
+nav{background:#111;border-bottom:1px solid var(–border);display:flex;justify-content:center;gap:0;flex-wrap:wrap;}
+nav button{background:none;border:none;cursor:pointer;padding:12px 24px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:.2s;border-bottom:3px solid transparent;color:var(–muted);}
+nav button.active,nav button:hover{color:#fff;border-bottom-color:var(–gold);}
+
+main{max-width:1100px;margin:0 auto;padding:28px 16px 60px;}
+
+.promo-section{display:none;}
+.promo-section.active{display:block;}
+.week-section{display:none;}
+.week-section.active{display:block;}
+
+/* EVENT HEADER */
+.event-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding:18px 22px;border-radius:8px;border:1px solid var(–border);}
+.event-header.one-style{background:linear-gradient(135deg,var(–card),#1e0000);border-color:var(–red);}
+.event-header.rws-style{background:linear-gradient(135deg,var(–card),#1a1000);border-color:#ff9900;}
+.event-badge{color:#fff;font-size:10px;font-weight:800;letter-spacing:2px;padding:5px 12px;border-radius:4px;white-space:nowrap;text-transform:uppercase;}
+.badge-one{background:var(–red);}
+.badge-rws{background:#d4720a;}
+.badge-done{background:#444;}
+.event-header-info h2{font-size:clamp(14px,2.5vw,20px);font-weight:800;}
+.event-header-info p{font-size:12px;color:var(–muted);margin-top:3px;}
+
+.sec-title{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–red);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(–border);}
+.sec-title.rws-color{color:#ff9900;}
+
+/* FIGHTER GRID */
+.fighter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:32px;}
+.fighter-card{background:var(–card);border:1px solid var(–border);border-radius:8px;padding:18px;position:relative;overflow:hidden;transition:.2s;}
+.fighter-card:hover{border-color:var(–red);transform:translateY(-2px);}
+.fighter-card.rws-card:hover{border-color:#ff9900;}
+.fighter-card::before{content:’’;position:absolute;top:0;left:0;width:4px;height:100%;background:var(–red);}
+.fighter-card.rws-card::before{background:#ff9900;}
+.fighter-card.undercard::before{background:#444;}
+.fc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.fc-name{font-size:15px;font-weight:800;color:#fff;}
+.fc-nick{font-size:12px;color:var(–gold);font-style:italic;margin-top:2px;}
+.fc-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;background:#1a1a1a;border:1px solid var(–border);color:var(–muted);white-space:nowrap;letter-spacing:1px;text-transform:uppercase;}
+.fc-stats{display:flex;gap:12px;margin:8px 0;flex-wrap:wrap;}
+.stat-val{font-size:15px;font-weight:800;color:#fff;}
+.stat-label{font-size:10px;color:var(–muted);text-transform:uppercase;letter-spacing:1px;}
+.fc-detail{font-size:12px;color:#aaa;line-height:1.6;margin-top:8px;}
+.fc-detail strong{color:#ddd;}
+
+/* MAIN EVENT CARD */
+.main-event-card{border-radius:10px;padding:22px;margin-bottom:18px;position:relative;overflow:hidden;}
+.main-event-card.one-main{background:linear-gradient(135deg,#1a0808,#0d0d0d);border:2px solid var(–red);}
+.main-event-card.one-co{background:linear-gradient(135deg,#1a1600,#0d0d0d);border:2px solid var(–gold);}
+.main-event-card.rws-main{background:linear-gradient(135deg,#1a0d00,#0d0d0d);border:2px solid #ff9900;}
+.main-event-card.rws-title{background:linear-gradient(135deg,#120800,#0d0d0d);border:2px solid #d4720a;}
+.me-label{position:absolute;top:12px;right:12px;font-size:9px;font-weight:800;letter-spacing:2px;padding:3px 10px;border-radius:3px;text-transform:uppercase;}
+.me-label.lbl-main{background:var(–red);color:#fff;}
+.me-label.lbl-co{background:var(–gold);color:#000;}
+.me-label.lbl-rws{background:#d4720a;color:#fff;}
+.me-label.lbl-title{background:linear-gradient(90deg,#d4720a,#ff9900);color:#fff;}
+.me-title{font-size:clamp(14px,2.5vw,20px);font-weight:900;color:#fff;margin-bottom:4px;margin-right:100px;}
+.me-sub{font-size:12px;color:var(–muted);margin-bottom:14px;}
+.me-vs{display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0;flex-wrap:wrap;}
+.mev-fighter{text-align:center;flex:1;min-width:120px;}
+.mev-name{font-size:clamp(13px,2vw,17px);font-weight:800;color:#fff;}
+.mev-record{font-size:11px;color:var(–muted);margin-top:2px;}
+.mev-vs{font-size:26px;font-weight:900;color:var(–red);padding:0 6px;}
+.mev-vs.rws-vs{color:#ff9900;}
+.me-desc{font-size:12px;color:#aaa;line-height:1.7;margin-top:12px;}
+
+/* MATCHUP CARD */
+.matchup-card{background:var(–card);border:1px solid var(–border);border-radius:8px;margin-bottom:10px;overflow:hidden;transition:.2s;}
+.matchup-card:hover{border-color:rgba(230,32,32,.4);}
+.matchup-card.rws-matchup:hover{border-color:rgba(255,153,0,.4);}
+.matchup-header{background:#1a1a1a;padding:9px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(–border);}
+.matchup-title{font-size:12px;font-weight:700;color:#fff;}
+.matchup-sport{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.sport-muay{background:rgba(230,32,32,.2);color:#ff6b6b;border:1px solid rgba(230,32,32,.3);}
+.sport-kick{background:rgba(100,180,255,.15);color:#7ecfff;border:1px solid rgba(100,180,255,.3);}
+.sport-mma{background:rgba(180,120,255,.15);color:#c9a0ff;border:1px solid rgba(180,120,255,.3);}
+.matchup-fighters{padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.mf-name{flex:1;}
+.mf-name.right{text-align:right;}
+.mf-fighter-name{font-size:13px;font-weight:700;color:#fff;}
+.mf-country{font-size:11px;color:var(–muted);margin-top:2px;}
+.vs-badge{background:var(–red);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:4px;flex-shrink:0;}
+.vs-badge.rws-vs-badge{background:#d4720a;}
+
+/* RESULT CARD */
+.result-card{background:var(–card);border:1px solid var(–border);border-radius:8px;margin-bottom:10px;overflow:hidden;transition:.2s;}
+.result-card:hover{border-color:rgba(230,32,32,.3);}
+.result-card.rws-result:hover{border-color:rgba(255,153,0,.3);}
+.result-header{background:#1a1a1a;padding:9px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(–border);}
+.result-body{padding:14px 18px;}
+.result-fighters{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.winner{font-size:14px;font-weight:800;color:#fff;}
+.loser{font-size:14px;font-weight:600;color:var(–muted);}
+.result-method{display:inline-block;margin:0 6px;background:#1e3a1e;border:1px solid #2d6b2d;color:#7fff7f;font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;letter-spacing:1px;}
+.result-desc{font-size:12px;color:#aaa;line-height:1.65;}
+.result-desc strong{color:#ddd;}
+
+/* INFO STRIP */
+.info-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.info-chip{background:#1a1a1a;border:1px solid var(–border);border-radius:4px;padding:7px 12px;font-size:11px;}
+.info-chip span{color:var(–muted);margin-right:4px;}
+.info-chip strong{color:#fff;}
+
+.intro-box{background:linear-gradient(135deg,#111,#1a0000);border:1px solid var(–border);border-left:4px solid var(–red);border-radius:6px;padding:16px 18px;margin-bottom:22px;font-size:12px;color:#bbb;line-height:1.75;}
+.intro-box.rws-intro{border-left-color:#ff9900;background:linear-gradient(135deg,#111,#1a0d00);}
+.intro-box strong{color:#fff;}
+
+/* RWS INFO BOX */
+.rws-about{background:#111;border:1px solid rgba(255,153,0,.25);border-radius:8px;padding:16px 20px;margin-bottom:22px;font-size:12px;color:#bbb;line-height:1.75;}
+.rws-about h3{font-size:11px;color:#ff9900;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+
+.pending-box{background:#111;border:1px dashed #444;border-radius:8px;padding:20px;text-align:center;color:var(–muted);font-size:13px;margin:20px 0;}
+.pending-box .pending-icon{font-size:28px;margin-bottom:8px;}
+
+@media(max-width:600px){
+.fighter-grid{grid-template-columns:1fr;}
+.me-vs,.matchup-fighters{flex-direction:column;align-items:flex-start;}
+.mf-name.right{text-align:left;}
+.mev-vs{padding:4px 0;}
+.me-title{margin-right:0;}
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="logo-tag">バンコク ムエタイ 日本語情報</div>
+  <h1>ONE <span>Championship</span> & <span class="rws-accent">RWS</span> 週刊情報</h1>
+  <p class="header-sub">2026年2月25日更新 ／ タイ格闘技の最新情報を日本語で</p>
+</header>
+
+<!-- PROMO SELECT -->
+
+<div class="promo-tabs">
+  <button class="promo-btn active-one" onclick="showPromo('one',this)">
+    <span class="promo-label-one">● </span>ONE Championship
+  </button>
+  <button class="promo-btn" onclick="showPromo('rws',this)">
+    <span class="promo-label-rws">● </span>RWS ラジャダムナン
+  </button>
+</div>
+
+<!-- WEEK TABS -->
+
+<nav>
+  <button class="active" id="nav-this" onclick="showWeek('this-week',this)">今週</button>
+  <button id="nav-last" onclick="showWeek('last-week',this)">先週の結果</button>
+</nav>
+
+<main>
+
+<!-- ======================== ONE CHAMPIONSHIP ======================== -->
+
+<div id="promo-one" class="promo-section active">
+
+  <!-- 今週 ONE -->
+
+  <div id="one-this-week" class="week-section active">
+    <div class="event-header one-style">
+      <div class="event-badge badge-one">今週</div>
+      <div class="event-header-info">
+        <h2>ONE Friday Fights 144</h2>
+        <p>2026年2月27日（金）19:30 ICT ／ ルンピニースタジアム、バンコク</p>
+      </div>
+    </div>
+    <div class="info-strip">
+      <div class="info-chip"><span>試合数</span><strong>14試合</strong></div>
+      <div class="info-chip"><span>ムエタイ</span><strong>9試合</strong></div>
+      <div class="info-chip"><span>キック</span><strong>3試合</strong></div>
+      <div class="info-chip"><span>MMA</span><strong>2試合</strong></div>
+      <div class="info-chip"><span>視聴</span><strong>YouTube・watch.onefc.com</strong></div>
+    </div>
+
+```
+<div class="sec-title">メインイベント</div>
+<div class="main-event-card one-main">
+  <span class="me-label lbl-main">MAIN EVENT</span>
+  <div class="me-title">チャトピチット vs. トゥプティムトン</div>
+  <div class="me-sub">ムエタイ アトム級（約52kg以下） ／ 3ラウンド</div>
+  <div class="me-vs">
+    <div class="mev-fighter">
+      <div class="mev-name">チャトピチット・ソー・ソー・トイパドリュー</div>
+      <div class="mev-record">🇹🇭 タイ ／ 26歳 ／ 戦績 62勝17敗</div>
+    </div>
+    <div class="mev-vs">VS</div>
+    <div class="mev-fighter">
+      <div class="mev-name">トゥプティムトン・インファーホテルウボン</div>
+      <div class="mev-record">🇹🇭 タイ（ウボン府） ／ 25歳 ／ 戦績 59勝14敗</div>
+    </div>
+  </div>
+  <div class="me-desc">
+    <strong>チャトピチット</strong>は農家の家族を持つテクニシャン。ボディキックの精度とエルボーワークが際立ち、現在2連勝中。「故郷のコミュニティを鼓舞するために戦う」と語る。<br><br>
+    <strong>トゥプティムトン</strong>は鋭いストレートとエルボーを武器に2つのKO勝利を持つ豪打ファイター。3連敗からの巻き返しを狙い、初ボーナスで両親の農地を購入した人情派。今回はKO復活を誓う。
+  </div>
+</div>
+
+<div class="main-event-card one-co" style="margin-top:12px;">
+  <span class="me-label lbl-co">CO-MAIN</span>
+  <div class="me-title" style="color:var(--gold)">ワンパデット vs. ロートン</div>
+  <div class="me-sub">ムエタイ フライ級（約61kg以下） ／ 3ラウンド</div>
+  <div class="me-vs">
+    <div class="mev-fighter">
+      <div class="mev-name">ワンパデット・NF・ルックスアン</div>
+      <div class="mev-record">🇻🇳→🇹🇭 ／ 23歳 ／ 戦績 63勝11敗 ／ 6連勝中</div>
+    </div>
+    <div class="mev-vs" style="color:var(--gold)">VS</div>
+    <div class="mev-fighter">
+      <div class="mev-name">ロートン・クルアイナイムアンジム</div>
+      <div class="mev-record">🇹🇭 ノンブアランプー ／ <strong>17歳！</strong>／ 戦績 56勝14敗</div>
+    </div>
+  </div>
+  <div class="me-desc">
+    <strong>ワンパデット</strong>はベトナム生まれながらタイ育ちの父親ファイター。右ストレートとボディキックを軸にしたカウンタースタイル。<br><br>
+    <strong>ロートン</strong>（「黄金の盾」の意）は驚異の17歳。16歳でONEデビューをKOで飾った天才少年で、サウスポー⇔オーソドックスの瞬時切り替えが最大の武器。
+  </div>
+</div>
+
+<div class="sec-title" style="margin-top:24px;">注目選手プロフィール</div>
+<div class="fighter-grid">
+  <div class="fighter-card">
+    <div class="fc-top">
+      <div>
+        <div class="fc-name">エドソン・マシャヴァーニ</div>
+        <div class="fc-nick">「トラップドア・スパイダー」</div>
+      </div>
+      <div class="fc-badge">MMA フライ級</div>
+    </div>
+    <div class="fc-stats">
+      <div class="stat"><div class="stat-val">7-0</div><div class="stat-label">戦績</div></div>
+      <div class="stat"><div class="stat-val">30歳</div><div class="stat-label">年齢</div></div>
+      <div class="stat"><div class="stat-val">🇲🇿 モザンビーク</div><div class="stat-label">出身</div></div>
+    </div>
+    <div class="fc-detail">2008年に母を亡くし一時ホームレス状態でレストランの厨房で寝泊まりしながら夢を追い続けた苦労人。柔術ベースで素早いボディキックと危険な関節技を持ち、7戦5フィニッシュの無敗ファイター。</div>
+  </div>
+  <div class="fighter-card undercard">
+    <div class="fc-top">
+      <div>
+        <div class="fc-name">サルドル・カリボエフ</div>
+        <div class="fc-nick">「ゴールデン」</div>
+      </div>
+      <div class="fc-badge">MMA フライ級</div>
+    </div>
+    <div class="fc-stats">
+      <div class="stat"><div class="stat-val">5-0</div><div class="stat-label">戦績</div></div>
+      <div class="stat"><div class="stat-val">21歳</div><div class="stat-label">年齢</div></div>
+      <div class="stat"><div class="stat-val">🇺🇿 ウズベキスタン</div><div class="stat-label">出身</div></div>
+    </div>
+    <div class="fc-detail">ウズベキスタンのジュニア王者経験を持つサンボ使い。左の豪打でKOを狙いつつテイクダウンへ移行し一本を狙う。21歳とは思えない完成度で5戦4フィニッシュ。マシャヴァーニとの無敗対決は今大会最大の激戦。</div>
+  </div>
+  <div class="fighter-card undercard">
+    <div class="fc-top">
+      <div><div class="fc-name">北野 勝希</div></div>
+      <div class="fc-badge">ムエタイ バンタム級</div>
+    </div>
+    <div class="fc-stats">
+      <div class="stat"><div class="stat-val">🇯🇵 日本</div><div class="stat-label">出身</div></div>
+    </div>
+    <div class="fc-detail">日本人ムエタイ選手としてONEに登場。イタリアのレニー・ブラージと対戦し、ONEメインロースターへの切符を懸けて戦う。</div>
+  </div>
+  <div class="fighter-card undercard">
+    <div class="fc-top">
+      <div><div class="fc-name">柴田 勇哉</div></div>
+      <div class="fc-badge">キックボクシング フェザー級</div>
+    </div>
+    <div class="fc-stats">
+      <div class="stat"><div class="stat-val">🇯🇵 日本</div><div class="stat-label">出身</div></div>
+    </div>
+    <div class="fc-detail">日本人キックボクサー。モロッコのモハメド・ヒディディとフェザー級キックボクシングで激突。ONEとの契約獲得を目指す。</div>
+  </div>
+  <div class="fighter-card undercard">
+    <div class="fc-top">
+      <div><div class="fc-name">門所 仁（ジン・マンドコロ）</div></div>
+      <div class="fc-badge">ムエタイ ストロー級</div>
+    </div>
+    <div class="fc-stats">
+      <div class="stat"><div class="stat-val">🇯🇵 日本</div><div class="stat-label">出身</div></div>
+    </div>
+    <div class="fc-detail">アルメニアのエドガー・マルカリアンと対戦する日本人ムエタイ選手。</div>
+  </div>
+</div>
+
+<div class="sec-title">全対戦カード</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">🏆 メイン ／ アトム級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">チャトピチット・ソー・ソー・トイパドリュー</div><div class="mf-country">🇹🇭 62-17</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">トゥプティムトン・インファーホテルウボン</div><div class="mf-country">🇹🇭 59-14</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">⭐ コメイン ／ フライ級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ワンパデット・NF・ルックスアン</div><div class="mf-country">🇻🇳→🇹🇭 63-11</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ロートン・クルアイナイムアンジム</div><div class="mf-country">🇹🇭 56-14（17歳）</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">無敗対決 ／ フライ級</span><span class="matchup-sport sport-mma">MMA</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">エドソン・マシャヴァーニ</div><div class="mf-country">🇲🇿 7-0</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">サルドル・カリボエフ</div><div class="mf-country">🇺🇿 5-0</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">フライ級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ブアケーウ・ソー・ソー・パコーン</div><div class="mf-country">🇹🇭</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ジェイコブ・トンプソン</div><div class="mf-country">🌍</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">フェザー級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">トム・キオ</div><div class="mf-country">🇮🇪 アイルランド</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ソブハン・アグハーイー</div><div class="mf-country">🇮🇷 イラン</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">バンタム級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">レニー・ブラージ</div><div class="mf-country">🇮🇹 イタリア</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">北野 勝希</div><div class="mf-country">🇯🇵 日本</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">フェザー級</span><span class="matchup-sport sport-kick">キックボクシング</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">モハメド・ヒディディ</div><div class="mf-country">🇲🇦 モロッコ</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">柴田 勇哉</div><div class="mf-country">🇯🇵 日本</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">ストロー級</span><span class="matchup-sport sport-mma">MMA</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ナザレット・ラルタズアラ</div><div class="mf-country">🇮🇳 インド</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">アリ・アフルーグ</div><div class="mf-country">🇮🇷 イラン</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">ストロー級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">エドガー・マルカリアン</div><div class="mf-country">🇦🇲 アルメニア</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">門所 仁</div><div class="mf-country">🇯🇵 日本</div></div>
+  </div>
+</div>
+<div class="matchup-card">
+  <div class="matchup-header"><span class="matchup-title">バンタム級（契約選手登場）</span><span class="matchup-sport sport-kick">キックボクシング</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">サンガーティット・ルックサイコンディン</div><div class="mf-country">🇹🇭 タイ</div></div>
+    <div class="vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">TAKU</div><div class="mf-country">🇯🇵 埼玉</div></div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- 先週 ONE -->
+
+  <div id="one-last-week" class="week-section">
+    <div class="event-header one-style">
+      <div class="event-badge badge-done">先週終了</div>
+      <div class="event-header-info">
+        <h2>ONE Friday Fights 143</h2>
+        <p>2026年2月20日（金）19:30 ICT ／ ルンピニースタジアム、バンコク</p>
+      </div>
+    </div>
+    <div class="intro-box">ONE Samurai（日本月例シリーズ）発表直後に開催。複数のスプリット判定が示すようにどの試合も僅差の名勝負が続いた一夜。</div>
+
+```
+<div class="sec-title">メインイベント結果</div>
+<div class="result-card">
+  <div class="result-header"><span class="matchup-title">🏆 メイン ／ 女子アトム級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="result-body">
+    <div class="result-fighters">
+      <span class="winner">🇲🇲 ベロ「ザ・カヤン・レオパード」</span>
+      <span class="result-method">スプリット判定</span>
+      <span class="loser">🇮🇱 シル・コーエン</span>
+    </div>
+    <div class="result-desc">ミャンマー出身のベロ（29歳・戦績30-4）がイスラエルの強打者コーエンを判定で退け、<strong>ONE女子アトム級ムエタイ世界王座挑戦権に大きく前進</strong>。コーエンのボクシングコンビネーションに対し、ベロは横移動とクリンチでのニーカウンターで主導権を握り続けた。最終ラウンドもコーエンは猛攻を仕掛けたが、2人の判定員がベロを支持する形でスプリット判定勝利。</div>
+  </div>
+</div>
+
+<div class="sec-title" style="margin-top:22px;">コメインイベント結果</div>
+<div class="result-card">
+  <div class="result-header"><span class="matchup-title">⭐ コメイン ／ フライ級</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="result-body">
+    <div class="result-fighters">
+      <span class="winner">🇹🇭 デンクリアンクライ・マビン・ムエタイ</span>
+      <span class="result-method">スプリット判定</span>
+      <span class="loser">🇹🇭 ペタピチャット・アピチャット・ムエタイ</span>
+    </div>
+    <div class="result-desc">デンクリアンクライ（27歳）が<strong>4連勝</strong>を達成。クリンチで相手ボディにニーを集中させ続ける明確な戦略を実行。ラジャダムナーンスタジアム王者のペタピチャットも精度の高いボクシングとエルボーで応戦し3ラウンド全てが紙一重の接戦に。</div>
+  </div>
+</div>
+
+<div class="sec-title" style="margin-top:22px;">その他の結果</div>
+<div class="result-card">
+  <div class="result-header"><span class="matchup-title">バンタム級 フィーチャードバウト</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="result-body">
+    <div class="result-fighters">
+      <span class="winner">🇹🇭 パンリット・ルックジャオマエサイワリー</span>
+      <span class="result-method">スプリット判定</span>
+      <span class="loser">🇹🇭 ナクロブ・フェアテックス</span>
+    </div>
+    <div class="result-desc">2連敗中のパンリット（29歳）が崖っぷちから大番狂わせ。序盤からジャブとパンチコンビネーションで主導権を握り、ナクロブのエルボーとニーを耐え続けて逆転判定勝利を飾った。</div>
+  </div>
+</div>
+<div class="result-card">
+  <div class="result-header"><span class="matchup-title">💰 パフォーマンスボーナス受賞（各$10,000）</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="result-body">
+    <div class="result-desc">
+      <strong>ワンチャイノイ・ソー・トー・ヒューバンサーン</strong>、<strong>ラムシン・T1ファイトアカデミー</strong>、<strong>ティーヤイ・トーファンファーム</strong> の3名が鮮やかなフィニッシュ勝利でボーナスを受賞。
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ======================== RWS ======================== -->
+
+<div id="promo-rws" class="promo-section">
+
+  <div class="rws-about">
+    <h3>🏟️ RWS（ラジャダムナン・ワールド・シリーズ）とは</h3>
+    バンコク最古・最高格式のムエタイ聖地「ラジャダムナースタジアム」が毎週土曜日に開催する国際ムエタイシリーズ。ラウンドごとにスコアが選手に公開される<strong>オープンスコアリング制</strong>を採用し、200ヶ国以上に<strong>DAZN</strong>でライブ配信。タイ選手と世界各国の選手が覇権を争う。
+  </div>
+
+  <!-- 今週 RWS -->
+
+  <div id="rws-this-week" class="week-section active">
+    <div class="event-header rws-style">
+      <div class="event-badge badge-rws">今週開催</div>
+      <div class="event-header-info">
+        <h2>RWS 183（ラジャダムナーン・ワールド・シリーズ 第183回）</h2>
+        <p>2026年2月28日（土）19:00 ICT ／ ラジャダムナースタジアム、バンコク ／ DAZN配信</p>
+      </div>
+    </div>
+    <div class="info-strip">
+      <div class="info-chip"><span>試合数</span><strong>7試合</strong></div>
+      <div class="info-chip"><span>形式</span><strong>3ラウンド（メインは5ラウンド）</strong></div>
+      <div class="info-chip"><span>スコア</span><strong>オープンスコアリング制</strong></div>
+      <div class="info-chip"><span>視聴</span><strong>DAZN（200ヶ国以上）</strong></div>
+    </div>
+
+```
+<div class="pending-box">
+  <div class="pending-icon">📋</div>
+  <strong>対戦カードは発表前です</strong><br>
+  <span style="font-size:12px;margin-top:6px;display:block;">RWSの試合カードは通常、大会前週の月曜〜水曜に公式発表されます。2月25日（水）時点で公開前のため、確定次第更新予定です。</span>
+</div>
+
+<div class="intro-box rws-intro">
+  <strong>📌 注目ポイント：</strong>先週（RWS 182）のメインイベント出場選手マリー・ルーメットとザイダニアの試合を受けた後続マッチアップが組まれる可能性があります。また、先週の女子ミニマム級王座戦の結果を受けた次期挑戦者争いも今後の動向に注目。
+</div>
+```
+
+  </div>
+
+  <!-- 先週 RWS -->
+
+  <div id="rws-last-week" class="week-section">
+    <div class="event-header rws-style">
+      <div class="event-badge badge-done">先週終了</div>
+      <div class="event-header-info">
+        <h2>RWS 182（ラジャダムナーン・ワールド・シリーズ 第182回）</h2>
+        <p>2026年2月21日（土）19:00 ICT ／ ラジャダムナースタジアム、バンコク ／ DAZN配信</p>
+      </div>
+    </div>
+
+```
+<div class="sec-title rws-color">メインイベント選手紹介</div>
+
+<div class="main-event-card rws-main">
+  <span class="me-label lbl-rws">MAIN EVENT</span>
+  <div class="me-title">マリー・ルーメット vs. ザイダニア・ルックサイコンディン</div>
+  <div class="me-sub">ムエタイ ストロー級（約57kg）／ 5ラウンド</div>
+  <div class="me-vs">
+    <div class="mev-fighter">
+      <div class="mev-name">マリー「スノー・レオパード」ルーメット</div>
+      <div class="mev-record">🇪🇪 エストニア ／ 26歳 ／ 戦績 5勝4敗</div>
+    </div>
+    <div class="mev-vs rws-vs">VS</div>
+    <div class="mev-fighter">
+      <div class="mev-name">ザイダニア・ルックサイコンディン</div>
+      <div class="mev-record">🇹🇭 タイ（フェアテックス所属） ／ 戦績 8勝6敗</div>
+    </div>
+  </div>
+  <div class="me-desc">
+    <strong>マリー・ルーメット</strong>はエストニア・シンディ出身の26歳。人口約4,000人の小さな町で育ち、15歳でムエタイを始めた。2017年にタイに移住してフルタイムで修行を積み、<strong>エストニア初のONE Championship選手</strong>となった人物。ニックネーム「スノー・レオパード（雪豹）」の通り、鋭いカウンターと素早い動きが特徴。RWSでカムラーイペットに判定勝利を収めるなど実績を積んでいる。<br><br>
+    <strong>ザイダニア</strong>はタイのムエタイ名門・フェアテックス所属の選手。戦績8-6ながらすべて判定勝負となるテクニカルスタイルで、ミャンマー・インドなど多国籍の選手から勝利を積み重ねてきた。
+  </div>
+</div>
+
+<div class="main-event-card rws-title" style="margin-top:12px;">
+  <span class="me-label lbl-title">🏆 TITLE FIGHT</span>
+  <div class="me-title" style="color:#ff9900;">モンクットペット vs. デビーナ・マーティン</div>
+  <div class="me-sub">ラジャダムナースタジアム 女子ミニマム級世界王座戦（105 lbs ≈ 47.6 kg）／ 5ラウンド</div>
+  <div class="me-vs">
+    <div class="mev-fighter">
+      <div class="mev-name">モンクットペット・ペットプラウファ</div>
+      <div class="mev-record">🇹🇭 タイ ／ 現役チャンピオン</div>
+    </div>
+    <div class="mev-vs rws-vs">VS</div>
+    <div class="mev-fighter">
+      <div class="mev-name">デビーナ・マーティン</div>
+      <div class="mev-record">🇦🇺 オーストラリア ／ 27歳 ／ 戦績 6勝2敗</div>
+    </div>
+  </div>
+  <div class="me-desc">
+    <strong>モンクットペット</strong>は2025年4月にRWSでペイヤーホンに勝利して女子ミニマム級王座を獲得した現チャンピオン。統一無敗のタイムスタイルで知られる。<br><br>
+    <strong>デビーナ・マーティン</strong>はオーストラリア出身27歳（身長160cm・47.6kg）。戦績6-2でRWSにおいてナンワン、ノンパーンファーを相次いで破り挑戦権を獲得。豪快な攻め込みとプレッシャーが持ち味で、チャンピオンに初の本格的国際挑戦者として挑む。
+  </div>
+</div>
+
+<div class="sec-title rws-color" style="margin-top:24px;">その他の対戦カード（RWS 182）</div>
+<div class="matchup-card rws-matchup">
+  <div class="matchup-header"><span class="matchup-title">メインカード ／ 136 lbs</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">サーンヘン</div><div class="mf-country">🇹🇭 タイ</div></div>
+    <div class="vs-badge rws-vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ソブハン・モハンマディ</div><div class="mf-country">🇮🇷 イラン</div></div>
+  </div>
+</div>
+<div class="matchup-card rws-matchup">
+  <div class="matchup-header"><span class="matchup-title">メインカード ／ 118 lbs</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ファーブンミー</div><div class="mf-country">🇹🇭 タイ</div></div>
+    <div class="vs-badge rws-vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ヨッドイ</div><div class="mf-country">🇹🇭 タイ</div></div>
+  </div>
+</div>
+<div class="matchup-card rws-matchup">
+  <div class="matchup-header"><span class="matchup-title">メインカード ／ 147 lbs</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ピーマイ</div><div class="mf-country">🇹🇭 タイ</div></div>
+    <div class="vs-badge rws-vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">パオロ・ダントーニ</div><div class="mf-country">🇮🇹 イタリア</div></div>
+  </div>
+</div>
+<div class="matchup-card rws-matchup">
+  <div class="matchup-header"><span class="matchup-title">プレリム ／ 152 lbs</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">ルイ・ドハーティ</div><div class="mf-country">🇮🇪 アイルランド</div></div>
+    <div class="vs-badge rws-vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ハリス・ミュラー</div><div class="mf-country">🌍 国際選手</div></div>
+  </div>
+</div>
+<div class="matchup-card rws-matchup">
+  <div class="matchup-header"><span class="matchup-title">プレリム ／ 135 lbs</span><span class="matchup-sport sport-muay">ムエタイ</span></div>
+  <div class="matchup-fighters">
+    <div class="mf-name"><div class="mf-fighter-name">シヌエ・フアレス・ビクトリーノ</div><div class="mf-country">🌍 国際選手</div></div>
+    <div class="vs-badge rws-vs-badge">VS</div>
+    <div class="mf-name right"><div class="mf-fighter-name">ブランドール・メンドーザ</div><div class="mf-country">🌍 国際選手</div></div>
+  </div>
+</div>
+
+<div class="intro-box rws-intro" style="margin-top:20px;">
+  <strong>⚠️ 注記：</strong>RWSの試合結果は公式ウェブサイトやSNSからの情報収集が難しく、詳細な経過レポートは現在収集中です。結果が確認でき次第更新します。DAZNのアーカイブまたはRWSの公式Instagram（@rwsmuaythai）で動画がご覧いただけます。
+</div>
+```
+
+  </div>
+
+</div><!-- /promo-rws -->
+
+</main>
+
+<script>
+  var currentPromo = 'one';
+  var currentWeek = 'this-week';
+
+  function showPromo(promo, btn) {
+    document.querySelectorAll('.promo-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.promo-btn').forEach(b => { b.classList.remove('active-one'); b.classList.remove('active-rws'); });
+    document.getElementById('promo-' + promo).classList.add('active');
+    btn.classList.add('active-' + promo);
+    currentPromo = promo;
+    updateWeekSections();
+  }
+
+  function showWeek(week, btn) {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentWeek = week.replace('this-week', 'this-week').replace('last-week', 'last-week');
+    updateWeekSections();
+  }
+
+  function updateWeekSections() {
+    var wKey = currentWeek === 'this-week' ? 'this-week' : 'last-week';
+    ['one', 'rws'].forEach(p => {
+      var tw = document.getElementById(p + '-this-week');
+      var lw = document.getElementById(p + '-last-week');
+      if (tw) { tw.classList.remove('active'); }
+      if (lw) { lw.classList.remove('active'); }
+      var target = document.getElementById(p + '-' + wKey);
+      if (target) target.classList.add('active');
+    });
+  }
+
+  // init nav highlight
+  document.querySelectorAll('.promo-btn')[0].classList.add('active-one');
+</script>
+
+</body>
+</html>
